@@ -51,6 +51,28 @@ def main():
 
     print("[PASS] Port 8080 returned expected HTML and status 200")
 
+    # Rate limiting validation (5 requests/sec)
+    # Send a burst of requests quickly and expect at least one request to be limited (503/429).
+    limited_statuses = {429, 503}
+    limited_count = 0
+    total_requests = 20
+
+    print(f"Testing rate limiting on {url_ok} with {total_requests} rapid requests...")
+    for i in range(total_requests):
+        try:
+            r = requests.get(url_ok)
+        except Exception as e:
+            fail(f"Rate limit test request failed: {e}")
+
+        if r.status_code in limited_statuses:
+            limited_count += 1
+
+    if limited_count == 0:
+        fail("Rate limiting did not trigger (expected at least one 503/429 response).")
+
+    print(f"[PASS] Rate limiting triggered successfully ({limited_count}/{total_requests} requests were limited)")
+
+
     print(f"Testing error endpoint: {url_err}")
     try:
         # Send HTTP request to the error endpoint
@@ -78,4 +100,3 @@ def main():
 # Ensures main() runs only when executed as a script
 if __name__ == "__main__":
     main()
-ד

@@ -328,19 +328,19 @@ Rate limiting was configured per client IP at 5 requests per second and verified
 
 I configured a rate limiting zone per client IP with a limit of 5 requests per second.
 
-![1](<images/)
+![1](<images/Advanced Functional Requirements/Rate Limiting/1.png>)
 
 Rate limiting is enforced on the main endpoints using limit_req inside the location block.
 The limit is configured per client IP using limit_req_zone with a rate of 5 requests per second.
 
-![2](<images/)
+![2](images/Advanced Functional Requirements/Rate Limiting/2.png)
 
 The rate limit was tested by sending 20 rapid HTTP requests:
 
 ```bash
 1..20 | % { curl.exe -s -o NUL -w "%{http_code}`n" http://localhost:8080/ }
 ```
-![3](<images/)
+![3](<images/Advanced Functional Requirements/Rate Limiting/3.png>)
 
 Observed behavior:
 
@@ -349,6 +349,16 @@ Initial requests returned 200 OK
 Subsequent requests returned 503 Service Unavailable
 
 This confirms that the rate limit of 5 requests per second is enforced correctly.
+
+## Validate the rate limiting behavior
+
+The test script was extended to send a burst of requests and verify that rate limiting is enforced (expects at least one 503/429 response).
+
+![1](<>)
+
+![2](<>)
+
+
 
 
 
