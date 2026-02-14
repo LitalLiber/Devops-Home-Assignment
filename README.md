@@ -2,6 +2,7 @@
 
 ## Project Structure
 
+```text
 Devops-Home-Assignment/
 │
 ├── nginx/
@@ -11,6 +12,7 @@ Devops-Home-Assignment/
 │       └── index.html
 │
 └── README.md
+```
 
 The nginx directory contains all files required to build the custom Nginx Docker image, including configuration and static HTML content.
 
