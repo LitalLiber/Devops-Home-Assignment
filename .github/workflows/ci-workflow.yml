@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build and run with Docker Compose
+        run: |
+          docker compose up --build --abort-on-container-exit
+          docker compose down
+
+      # If tests pass
+      - name: Create succeeded artifact
+        if: success()
+        run: |
+          mkdir -p artifacts
+          echo "success" > artifacts/succeeded
+
+      - name: Upload succeeded artifact
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-result
+          path: artifacts/succeeded
+
+      # If tests fail
+      - name: Create fail artifact
+        if: failure()
+        run: |
+          mkdir -p artifacts
+          echo "fail" > artifacts/fail
+
+      - name: Upload fail artifact
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-result
+          path: artifacts/fail
