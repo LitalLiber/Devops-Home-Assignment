@@ -352,11 +352,152 @@ This confirms that the rate limit of 5 requests per second is enforced correctly
 
 ## Validate the rate limiting behavior
 
-The test script was extended to send a burst of requests and verify that rate limiting is enforced (expects at least one 503/429 response).
+To validate that the Nginx rate limiting configuration works correctly,
+the test script (test/test.py) was extended to simulate a burst of rapid requests.
 
-![1](<>)
+After validating that port 8080 returns HTTP 200 and the expected HTML content,
+the test script now:
 
-![2](<>)
+Sends 20 rapid HTTP requests to http://nginx:8080/
+
+Counts how many responses return 503 or 429
+
+Fails the test if no rate limiting is triggered
+
+Passes if at least one request is limited
+
+This ensures the rate limit of 5 requests per second is actively enforced.
+
+![1](<images/Advanced Functional Requirements/limiting behavior/1.png>)
+
+When running:
+```bash
+docker compose up --build --abort-on-container-exit
+```
+
+The test output should include:
+```bash
+Testing rate limiting on http://nginx:8080/ with 20 rapid requests...
+[PASS] Rate limiting triggered successfully (X/20 requests were limited)
+```
+![2](<images/Advanced Functional Requirements/limiting behavior/2.png>)
+
+This confirms:
+
+- Rate limiting is active
+
+- The test script correctly detects it
+
+- The CI pipeline will fail if rate limiting stops working
+
+## CI validates rate limiting as part of the automated tests.
+
+After extending the test script to validate the rate limiting behavior,
+a new commit was pushed to the repository. GitHub Actions automatically triggered the CI workflow.
+
+# CI Result
+
+- The workflow completed successfully.
+
+- The Docker images were rebuilt.
+
+- Docker Compose was executed.
+
+The extended test script validated:
+
+- HTTP 200 behavior
+
+- HTTP 404 behavior
+
+- Rate limiting enforcement
+
+- The test container exited with code 0.
+
+- An artifact named test-result was uploaded.
+
+This confirms that:
+
+Rate limiting is correctly enforced.
+
+The extended test logic works properly.
+
+The CI pipeline validates the new functionality automatically.
+
+![3](<images/Advanced Functional Requirements/limiting behavior/3.png>)
+
+## Rate Limiting Configuration
+
+To enhance server stability and prevent abuse, rate limiting was configured in the Nginx server.
+
+---
+
+### How it works
+
+Rate limiting is implemented using the `limit_req_zone` and `limit_req` directives in `nginx.conf`.
+
+At the `http` level, the following configuration is defined:
+
+```bash
+limit_req_zone $binary_remote_addr zone=req_limit_per_ip:10m rate=5r/s;
+```
+Explanation:
+
+- $binary_remote_addr
+Limits requests per client IP address.
+
+- zone=req_limit_per_ip:10m
+Allocates 10MB of shared memory to track request counters per IP.
+
+- rate=5r/s
+Allows a maximum of 5 requests per second per IP address.
+
+Inside each relevant server block (8080 and 443), rate limiting is enforced within the location block:
+```bash
+location / {
+    limit_req zone=req_limit_per_ip nodelay;
+    try_files $uri $uri/ =404;
+```
+![1](<images/Advanced Functional Requirements/Rate Limiting/2.png>)
+
+Explanation:
+
+- limit_req zone=req_limit_per_ip
+Applies the previously defined rate limiting zone.
+
+- nodelay
+Excess requests are rejected immediately instead of being delayed.
+
+When the request rate exceeds the defined threshold, Nginx responds with HTTP 503 (Service Temporarily Unavailable).
+
+## Rate Limiting Test Validation
+
+The automated test script was extended to validate the rate limiting behavior.
+
+It sends 20 rapid requests to the main endpoint and verifies that at least one request is rejected with HTTP 503 or 429.
+
+This ensures that rate limiting is actively enforced and functioning correctly.
+
+![2](<images/Advanced Functional Requirements/limiting behavior/2.png>)
+
+## How to change the rate limit threshold
+
+To modify the allowed request rate, update the following line in nginx.conf:
+
+```bash
+limit_req_zone $binary_remote_addr zone=req_limit_per_ip:10m rate=5r/s;
+```
+![1](<images/Advanced Functional Requirements/Rate Limiting/1.png>)
+
+After modifying the configuration, rebuild and restart the containers:
+
+```bash
+docker compose down
+docker compose up --build
+```
+The new rate limit will take effect immediately after the rebuild.
+
+
+
 
 
 
