@@ -10,6 +10,7 @@ It includes:
 - Docker Compose orchestration
 - GitHub Actions CI pipeline
 - Image size optimizations
+- Advanced Functional Requirements 
 
 ## Table of Contents
 - Overview
@@ -18,6 +19,7 @@ It includes:
 - Docker Compose
 - CI
 - Image Optimization
+- Advanced Functional Requirements 
 
 
 ## Project Structure
