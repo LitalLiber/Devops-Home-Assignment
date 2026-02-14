@@ -112,14 +112,12 @@ If any validation fails, it exits with a non-zero exit code.
 
 ## Docker Compose
 
-The project uses Docker Compose to run:
-- `nginx` service: exposes ports 8080 and 8081
-- `test` service: runs an automated Python test script against the Nginx service
+A single `docker-compose.yml` file is used to orchestrate both services:
 
-Run:
-```bash
-docker compose up --build --abort-on-container-exit
-```
+- **nginx**: builds the Ubuntu-based Nginx image and exposes ports `8080` and `8081`.
+- **test**: builds a separate Python test image that sends HTTP requests to the nginx service.
+
+The test container connects to the nginx container using the service hostname `nginx` on the internal Docker Compose network.
 
 ## Docker Compose Test Run
 
@@ -131,4 +129,11 @@ The `test` service runs an automated Python script that validates the Nginx serv
 Run:
 ```bash
 docker compose up --build --abort-on-container-exit
+```
+- build ensures both images are built.
+- abort-on-container-exit stops the stack when the test container finishes.
+
+## Cleanup
+```bash
+docker compose down
 ```
