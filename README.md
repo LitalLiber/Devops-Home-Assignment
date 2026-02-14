@@ -44,7 +44,7 @@ The nginx directory contains all files required to build the custom Nginx Docker
 The first Nginx server block returns a custom static HTML page 
 to fulfill the requirement of serving a custom HTML response.
 
-![Custom HTML Response](<images/1.Docker Images/a.Nginx Image/Custom HTML Response.png>)
+![Custom HTML Response](<images/1. Docker Images/a. Nginx Image/Custom HTML Response.png>)
 
 ### Nginx Configuration
 
@@ -57,7 +57,7 @@ Ports 8080 and 8081 were chosen to avoid requiring root privileges (as ports bel
 
 HTTP 404 was selected as the error response because it is simple, widely recognized, and clearly indicates a non-successful request.
 
-![Nginx Configuration](<images/1.Docker Images/a.Nginx Image/Nginx Configuration.png>)
+![Nginx Configuration](<images/1. Docker Images/a. Nginx Image/Nginx Configuration.png>)
 
 ### Dockerfile (Nginx Image)
 
@@ -66,14 +66,14 @@ HTTP 404 was selected as the error response because it is simple, widely recogni
 - apt cache is removed to reduce image size.
 - Nginx runs in the foreground using `daemon off;` to keep the container running.
 
-![Dockerfile (Nginx Image)](<images/1.Docker Images/a.Nginx Image/Dockerfile (Nginx Image).png>)
+![Dockerfile (Nginx Image)](<images/1. Docker Images/a. Nginx Image/Dockerfile (Nginx Image).png>)
 
 ### Build the Image
 
 ```bash
 docker build -t devops-nginx:1 -f nginx/Dockerfile nginx
 ```
-![Build the Image](<images/1.Docker Images/a.Nginx Image/Build the Image.png>)
+![Build the Image](<images/1. Docker Images/a. Nginx Image/Build the Image.png>)
 
 This command builds the custom Nginx Docker image based on Ubuntu 22.04.
 
@@ -85,7 +85,7 @@ docker run --name devops-nginx -d -p 8080:8080 -p 8081:8081 devops-nginx:1
 The container is started in detached mode (-d).
 Ports 8080 and 8081 are mapped from the container to the host machine.
 
-![the container is running](<images/1.Docker Images/a.Nginx Image/the container is running.png>)
+![the container is running](<images/1. Docker Images/a. Nginx Image/the container is running.png>)
 
 
 ### Verify Functionality
@@ -97,9 +97,9 @@ Expected behavior:
 - `http://localhost:8080` returns the custom HTML page.
 - `http://localhost:8081` returns HTTP 404 error.
 
-![run the containers with 2 ports](<images/1.Docker Images/a.Nginx Image/run the containers with 2 ports.png>)
-![server 1 HTML](<images/1.Docker Images/a.Nginx Image/server 1 HTML.png>)
-![server2 HTTP ](<images/1.Docker Images/a.Nginx Image/server2 HTTP .png>)
+![run the containers with 2 ports](<images/1. Docker Images/a. Nginx Image/run the containers with 2 ports.png>)
+![server 1 HTML](<images/1. Docker Images/a. Nginx Image/server 1 HTML.png>)
+![server2 HTTP ](<images/1. Docker Images/a. Nginx Image/server2 HTTP .png>)
 
 
 
@@ -131,7 +131,7 @@ Devops-Home-Assignment/
 The test directory contains a separate Docker image used to validate
 the Nginx server behavior.
 
-![Updated Project Structure](<images/1.Docker Images/b. Test Image/Updated Project Structure.png>)
+![Updated Project Structure](<images/1. Docker Images/b. Test Image/Updated Project Structure.png>)
 
 ### Test Script Validation Logic
 
@@ -142,7 +142,7 @@ The test script validates:
 
 If any validation fails, the script exits with a non-zero exit code.
 
-![Test Script Validation Logic](<images/1.Docker Images/b. Test Image/Test Script Validation Logic.png>)
+![Test Script Validation Logic](<images/1. Docker Images/b. Test Image/Test Script Validation Logic.png>)
 
 ### Design Decisions
 
@@ -160,7 +160,7 @@ A separate Docker image is used to run an automated Python test script.
 The script sends HTTP requests to both Nginx ports and validates status codes and response content.
 If any validation fails, it exits with a non-zero exit code.
 
-![Test Image](<images/1.Docker Images/b. Test Image/Test Image.png>)
+![Test Image](<images/1. Docker Images/b. Test Image/Test Image.png>)
 
 ## Docker Compose
 
@@ -171,7 +171,7 @@ A single `docker-compose.yml` file is used to orchestrate both services:
 
 The test container connects to the nginx container using the service hostname `nginx` on the internal Docker Compose network.
 
-![Docker Compose](<images/1.Docker Images/b. Test Image/Docker Compose.png>)
+![Docker Compose](<images/1. Docker Images/b. Test Image/Docker Compose.png>)
 
 ## Docker Compose Test Run
 
@@ -193,9 +193,9 @@ docker compose up --build --abort-on-container-exit
 ```bash
 docker compose down
 ```
-![Container devops-home-assignment-nginx-1   Created ](<images/2.Docker Compose/Container devops-home-assignment-nginx-1  Created.png>)
-![Container devops-home-assignment-test-1   Created ](<images/2.Docker Compose/Container devops-home-assignment-test-1  Created.png>)
-![Allows test container to access nginx container](<images/2.Docker Compose/Allows test container to access nginx container.png>)
+![Container devops-home-assignment-nginx-1   Created ](<images/2. Docker Compose/Container devops-home-assignment-nginx-1  Created .png>)
+![Container devops-home-assignment-test-1   Created ](<images/2. Docker Compose/Container devops-home-assignment-test-1   Created .png>)
+![Allows test container to access nginx container](<images/2. Docker Compose/Allows test container to access nginx container.png>)
 
 
 ## GitHub repository that includes all required files and configuration.
@@ -258,7 +258,7 @@ If tests pass, publish an artifact containing a file named succeeded.
 If tests fail, publish an artifact containing a file named fail.
 
 ![Add GitHub Actions CI workflow #1](<images/3. GitHub Repository & CI/Add GitHub Actions CI workflow #1.png>)
-![Add GitHub Actions CI workflow](<images/3. GitHub Repository & CI/If tests pass, publish an artifact containing a file named succeeded.png>)
+![Add GitHub Actions CI workflow](<images/3. GitHub Repository & CI/If tests pass, publish an artifact containing a file named succeeded..png>)
 
 ## Docker image sizes as small as possible.
 ![Add GitHub Actions CI workflow #1](<images/Small Docker Images/small images.png>)
