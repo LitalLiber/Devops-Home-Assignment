@@ -1,5 +1,25 @@
 # Devops Home Assignment
 
+## Overview
+
+This project implements a Docker-based Nginx service with automated testing and CI integration.
+
+It includes:
+- A custom Ubuntu-based Nginx image
+- A separate Python test image
+- Docker Compose orchestration
+- GitHub Actions CI pipeline
+- Image size optimizations
+
+## Table of Contents
+- Overview
+- Nginx Image
+- Test Image
+- Docker Compose
+- CI
+- Image Optimization
+
+
 ## Project Structure
 
 ```text
@@ -13,13 +33,18 @@ Devops-Home-Assignment/
 │
 └── README.md
 ```
+![Project Structure](<images/first steps/Project Structure.png>)
 
 The nginx directory contains all files required to build the custom Nginx Docker image, including configuration and static HTML content.
+
+![Create github ripo](<images/first steps/create github ripo.png>)
 
 ### Custom HTML Response
 
 The first Nginx server block returns a custom static HTML page 
 to fulfill the requirement of serving a custom HTML response.
+
+![Custom HTML Response](<images/1.Docker Images/a.Nginx Image/Custom HTML Response.png>)
 
 ### Nginx Configuration
 
@@ -32,6 +57,8 @@ Ports 8080 and 8081 were chosen to avoid requiring root privileges (as ports bel
 
 HTTP 404 was selected as the error response because it is simple, widely recognized, and clearly indicates a non-successful request.
 
+![Nginx Configuration](<images/1.Docker Images/a.Nginx Image/Nginx Configuration.png>)
+
 ### Dockerfile (Nginx Image)
 
 - Base image is Ubuntu 22.04 as required.
@@ -39,15 +66,17 @@ HTTP 404 was selected as the error response because it is simple, widely recogni
 - apt cache is removed to reduce image size.
 - Nginx runs in the foreground using `daemon off;` to keep the container running.
 
-## Local Run (Nginx Image)
+![Dockerfile (Nginx Image)](<images/1.Docker Images/a.Nginx Image/Dockerfile (Nginx Image).png>)
 
 ### Build the Image
 
 ```bash
 docker build -t devops-nginx:1 -f nginx/Dockerfile nginx
 ```
+![Build the Image](<images/1.Docker Images/a.Nginx Image/Build the Image.png>)
 
 This command builds the custom Nginx Docker image based on Ubuntu 22.04.
+
 
 ### Run the Container
 ```bash
@@ -55,6 +84,9 @@ docker run --name devops-nginx -d -p 8080:8080 -p 8081:8081 devops-nginx:1
 ```
 The container is started in detached mode (-d).
 Ports 8080 and 8081 are mapped from the container to the host machine.
+
+![the container is running](<images/1.Docker Images/a.Nginx Image/the container is running.png>)
+
 
 ### Verify Functionality
 ```bash
@@ -64,6 +96,10 @@ curl -i http://localhost:8081
 Expected behavior:
 - `http://localhost:8080` returns the custom HTML page.
 - `http://localhost:8081` returns HTTP 404 error.
+
+![run the containers with 2 ports](<images/1.Docker Images/a.Nginx Image/run the containers with 2 ports.png>)
+![server 1 HTML](<images/1.Docker Images/a.Nginx Image/server 1 HTML.png>)
+![server2 HTTP ](<images/1.Docker Images/a.Nginx Image/server2 HTTP .png>)
 
 
 
@@ -95,6 +131,8 @@ Devops-Home-Assignment/
 The test directory contains a separate Docker image used to validate
 the Nginx server behavior.
 
+![Updated Project Structure](<images/1.Docker Images/b. Test Image/Updated Project Structure.png>)
+
 ### Test Script Validation Logic
 
 The test script validates:
@@ -104,11 +142,25 @@ The test script validates:
 
 If any validation fails, the script exits with a non-zero exit code.
 
+![Test Script Validation Logic](<images/1.Docker Images/b. Test Image/Test Script Validation Logic.png>)
+
+### Design Decisions
+
+- Python was chosen for simplicity and readability.
+
+- python:3.12-slim was selected to keep the image size small.
+
+- The requests library is used for clean and reliable HTTP validation.
+
+- Both status code and content validation are performed to ensure correct behavior, not just connectivity.
+
 ## Test Image
 
 A separate Docker image is used to run an automated Python test script.
 The script sends HTTP requests to both Nginx ports and validates status codes and response content.
 If any validation fails, it exits with a non-zero exit code.
+
+![Test Image](<images/1.Docker Images/b. Test Image/Test Image.png>)
 
 ## Docker Compose
 
@@ -118,6 +170,8 @@ A single `docker-compose.yml` file is used to orchestrate both services:
 - **test**: builds a separate Python test image that sends HTTP requests to the nginx service.
 
 The test container connects to the nginx container using the service hostname `nginx` on the internal Docker Compose network.
+
+![Docker Compose](<images/1.Docker Images/b. Test Image/Docker Compose.png>)
 
 ## Docker Compose Test Run
 
@@ -133,10 +187,16 @@ docker compose up --build --abort-on-container-exit
 - build ensures both images are built.
 - abort-on-container-exit stops the stack when the test container finishes.
 
+![Docker Compose Test Run](<images/1.Docker Images/b. Test Image/Docker Compose Test Run.png>)
+
 ## Cleanup
 ```bash
 docker compose down
 ```
+![Container devops-home-assignment-nginx-1   Created ](<images/2.Docker Compose/Container devops-home-assignment-nginx-1  Created.png>)
+![Container devops-home-assignment-test-1   Created ](<images/2.Docker Compose/Container devops-home-assignment-test-1  Created.png>)
+![Allows test container to access nginx container](<images/2.Docker Compose/Allows test container to access nginx container.png>)
+
 
 ## GitHub repository that includes all required files and configuration.
 
@@ -146,24 +206,29 @@ A GitHub repository was created that includes all required files and configurati
 
 The repository contains:
 
-nginx/ – Nginx Docker image (Ubuntu-based)
+- nginx/ – Nginx Docker image (Ubuntu-based)
 
-test/ – Test Docker image (Python-based)
+- test/ – Test Docker image (Python-based)
 
-docker-compose.yml
+- docker-compose.yml
 
-.github/workflows/ci-workflow.yml
+- .github/workflows/ci-workflow.yml
 
-README.md
+- README.md
+
+![GitHub repository that includes all required files and configuration](<images/3. GitHub Repository & CI/GitHub repository that includes all required files and configuration.png>)
+
 
 ## CI (GitHub Actions)
 
-A GitHub Actions workflow (`.github/workflows/ci.yml`) runs on every push and pull request.
+A GitHub Actions workflow (`.github/workflows/ci-workflow.yml`) runs on every push and pull request.
 
 It performs:
 - Builds and runs the project using Docker Compose.
 - If tests pass, it uploads an artifact containing a file named `succeeded`.
 - If tests fail, it uploads an artifact containing a file named `fail`.
+
+![workflow (ci.yml)](<images/3. GitHub Repository & CI/workflow (ci.yml).png>)
 
 ## Committing and Pushing the Workflow
 The workflow file was committed and pushed using:
@@ -172,6 +237,7 @@ git add .github/workflows/ci-workflow.yml
 git commit -m "Add GitHub Actions CI workflow"
 git push
 ```
+![Add GitHub Actions CI workflow](<images/3. GitHub Repository & CI/Add GitHub Actions CI workflow.png>)
 
 ## CI Execution Result
 After pushing the workflow file, GitHub Actions automatically triggered a CI run.
@@ -190,3 +256,18 @@ This satisfies the requirement:
 
 If tests pass, publish an artifact containing a file named succeeded.
 If tests fail, publish an artifact containing a file named fail.
+
+![Add GitHub Actions CI workflow #1](<images/3. GitHub Repository & CI/Add GitHub Actions CI workflow #1.png>)
+![Add GitHub Actions CI workflow](<images/3. GitHub Repository & CI/If tests pass, publish an artifact containing a file named succeeded.png>)
+
+## Docker image sizes as small as possible.
+![Add GitHub Actions CI workflow #1](<images/Small Docker Images/small images.png>)
+
+The relatively small image sizes were achieved by:
+
+- Using `--no-install-recommends` in the Ubuntu-based Nginx image.(in nginx/Dockerfile).
+- Removing apt cache after installation.(in nginx/Dockerfile).
+- Using `python:3.12-slim` for the test image.(in test/Dockerfile).
+- Installing Python dependencies with `--no-cache-dir`.(in test/Dockerfile).
+
+These optimizations reduce unnecessary layers and prevent storing temporary installation files inside the final images.
