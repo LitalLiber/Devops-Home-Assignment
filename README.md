@@ -187,7 +187,7 @@ docker compose up --build --abort-on-container-exit
 - build ensures both images are built.
 - abort-on-container-exit stops the stack when the test container finishes.
 
-![Docker Compose Test Run](<images/1.Docker Images/b. Test Image/Docker Compose Test Run.png>)
+![Docker Compose Test Run](<images/1. Docker Images/b. Test Image/Docker Compose Test Run.png>)
 
 ## Cleanup
 ```bash
@@ -271,3 +271,7 @@ The relatively small image sizes were achieved by:
 - Installing Python dependencies with `--no-cache-dir`.(in test/Dockerfile).
 
 These optimizations reduce unnecessary layers and prevent storing temporary installation files inside the final images.
+
+
+
+## 
