@@ -22,10 +22,12 @@ COPY nginx.conf /etc/nginx/nginx.conf
 # Assumption: The nginx.conf root directive points to /var/www/html
 COPY html/ /var/www/html/
 
+COPY certs/ /etc/nginx/certs/
+
 # Expose both ports used by the two server blocks
 # Port 8080 -> custom HTML response
 # Port 8081 -> HTTP error response
-EXPOSE 8080 8081
+EXPOSE 8080 8081 443
 
 # Run Nginx in foreground mode
 # Required so the container does not exit immediately

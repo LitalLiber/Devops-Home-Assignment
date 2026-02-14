@@ -275,3 +275,51 @@ These optimizations reduce unnecessary layers and prevent storing temporary inst
 
 
 ## Advanced Functional Requirements 
+
+## HTTPS with Self-Signed Certificate
+
+### Generate Certificate and Private Key
+
+The certificate and key were generated using OpenSSL inside a temporary Alpine container (to avoid installing OpenSSL locally):
+```bash
+docker run --rm -v ${PWD}\nginx\certs:/certs alpine sh -c \
+"apk add --no-cache openssl && \
+openssl req -x509 -nodes -newkey rsa:2048 -days 365 \
+-keyout /certs/server.key -out /certs/server.crt \
+-subj '/CN=localhost'"
+```
+This creates the following files:
+
+- nginx/certs/server.crt — self-signed certificate
+
+- nginx/certs/server.key — private key
+
+![self-signed certificate with HTTPS](<images/>)
+
+I added an additional server block that listens on port 443 with SSL enabled and serves the same HTML content as the HTTP server on port 8080.
+
+I configured the paths to the self-signed certificate and private key used by Nginx for HTTPS.
+
+![add 443 port](<images/>)
+
+I copied the self-signed certificate and private key into the Docker image so that Nginx can load them at runtime.
+
+I exposed port 443 in the Nginx Docker image to support HTTPS traffic.
+
+I mapped host port 443 to container port 443 in docker-compose so HTTPS can be accessed from the local machine.
+
+![3](<images/>)
+
+### Verify HTTPS
+
+```bash
+docker compose up --build -d nginx
+curl.exe -k https://localhost/
+```
+![4](<images/>)
+
+The -k flag allows connection using a self-signed certificate.
+
+Expected result: HTTP 200 response with the same HTML page as port 8080.
+
+
