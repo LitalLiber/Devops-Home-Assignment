@@ -1,0 +1,19 @@
+services:
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+
+  test:
+    build:
+      context: ./test
+      dockerfile: Dockerfile
+    depends_on:
+      - nginx
+    environment:
+      NGINX_HOST: nginx
+      PORT_OK: "8080"
+      PORT_ERR: "8081"

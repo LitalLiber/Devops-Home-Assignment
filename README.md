@@ -75,3 +75,60 @@ docker rm devops-nginx
 This step stops and removes the container after verification.
 
 
+## Updated Project Structure
+```text
+Devops-Home-Assignment/
+│
+├── nginx/
+│   ├── Dockerfile
+│   ├── nginx.conf
+│   └── html/
+│       └── index.html
+│
+├── test/
+│   ├── Dockerfile
+│   ├── requirements.txt
+│   └── test.py
+│
+└── README.md
+```
+The test directory contains a separate Docker image used to validate
+the Nginx server behavior.
+
+### Test Script Validation Logic
+
+The test script validates:
+
+- Port 8080 returns HTTP 200 and contains the expected HTML content.
+- Port 8081 returns HTTP 404 error.
+
+If any validation fails, the script exits with a non-zero exit code.
+
+## Test Image
+
+A separate Docker image is used to run an automated Python test script.
+The script sends HTTP requests to both Nginx ports and validates status codes and response content.
+If any validation fails, it exits with a non-zero exit code.
+
+## Docker Compose
+
+The project uses Docker Compose to run:
+- `nginx` service: exposes ports 8080 and 8081
+- `test` service: runs an automated Python test script against the Nginx service
+
+Run:
+```bash
+docker compose up --build --abort-on-container-exit
+```
+
+## Docker Compose Test Run
+
+The `test` service runs an automated Python script that validates the Nginx service behavior:
+
+- Port 8080 returns HTTP 200 and contains the expected HTML content.
+- Port 8081 returns HTTP 404 error.
+
+Run:
+```bash
+docker compose up --build --abort-on-container-exit
+```
