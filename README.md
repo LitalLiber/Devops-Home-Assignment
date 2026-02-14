@@ -257,7 +257,7 @@ This satisfies the requirement:
 If tests pass, publish an artifact containing a file named succeeded.
 If tests fail, publish an artifact containing a file named fail.
 
-![Add GitHub Actions CI workflow #1](<images/3. GitHub Repository & CI/Add GitHub Actions CI workflow #1.png>)
+![Add GitHub Actions CI workflow #1](<images/3. GitHub Repository & CI/Add GitHub Actions CI workflow1.png>)
 ![Add GitHub Actions CI workflow](<images/3. GitHub Repository & CI/If tests pass, publish an artifact containing a file named succeeded..png>)
 
 ## Docker image sizes as small as possible.
