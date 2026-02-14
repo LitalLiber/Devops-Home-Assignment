@@ -1,29 +1,44 @@
+# Workflow name as it appears in GitHub Actions UI
 name: CI
 
+# Define when this workflow runs
+# It triggers on every push and every pull request
 on:
   push:
   pull_request:
 
 jobs:
+  # Single job responsible for running the full test pipeline
   test:
+    # Use GitHub-hosted Ubuntu runner
+    # Docker and Docker Compose are available by default
     runs-on: ubuntu-latest
 
     steps:
+      # Step 1: Clone repository into the runner environment
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # Step 2: Build images and run docker compose
+      # If the test container exits with non-zero exit code,
+      # this step fails and the job status becomes "failure"
       - name: Build and run with Docker Compose
         run: |
           docker compose up --build --abort-on-container-exit
           docker compose down
 
-      # If tests pass
+      # If tests pass (exit code 0), success() condition becomes true
+
+      # Step 3: Create a file named "succeeded"
+      # This file serves as proof that tests completed successfully
       - name: Create succeeded artifact
         if: success()
         run: |
           mkdir -p artifacts
           echo "success" > artifacts/succeeded
 
+      # Step 4: Upload the succeeded file as an artifact
+      # Artifact can be downloaded from GitHub Actions UI
       - name: Upload succeeded artifact
         if: success()
         uses: actions/upload-artifact@v4
@@ -31,13 +46,19 @@ jobs:
           name: test-result
           path: artifacts/succeeded
 
-      # If tests fail
+      # If any previous step failed (including docker compose),
+      # failure() condition becomes true
+
+      # Step 5: Create a file named "fail"
+      # This indicates that tests did not pass
       - name: Create fail artifact
         if: failure()
         run: |
           mkdir -p artifacts
           echo "fail" > artifacts/fail
 
+      # Step 6: Upload the fail file as an artifact
+      # Allows clear indication in CI results
       - name: Upload fail artifact
         if: failure()
         uses: actions/upload-artifact@v4

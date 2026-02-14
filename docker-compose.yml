@@ -1,19 +1,40 @@
+# Define all services for the application
 services:
+
+  # Nginx service - responsible for serving the two HTTP endpoints
   nginx:
     build:
+      # Build context points to the nginx directory
+      # This directory contains the Dockerfile, nginx.conf and HTML files
       context: ./nginx
+
+      # Explicitly define Dockerfile (good practice even if default name)
       dockerfile: Dockerfile
+
+    # Expose container ports to the host machine
+    # Allows local testing via http://localhost:8080 and 8081
     ports:
       - "8080:8080"
       - "8081:8081"
 
+  # Test service - runs the automated test script
   test:
     build:
+      # Build context for the test image
+      # Contains its own Dockerfile and test.py
       context: ./test
       dockerfile: Dockerfile
+
+    # Ensure nginx container starts before test runs
+    # Note: depends_on controls start order, not health status
     depends_on:
       - nginx
+
+    # Pass environment variables to the test container
+    # Design decision:
+    # We configure host and ports via environment variables
+    # to keep the test script flexible and reusable
     environment:
-      NGINX_HOST: nginx
-      PORT_OK: "8080"
-      PORT_ERR: "8081"
+      NGINX_HOST: nginx   # Docker Compose service name used as hostname
+      PORT_OK: "8080"     # Port expected to return HTTP 200 + HTML
+      PORT_ERR: "8081"    # Port expected to return HTTP 404

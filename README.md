@@ -137,3 +137,56 @@ docker compose up --build --abort-on-container-exit
 ```bash
 docker compose down
 ```
+
+## GitHub repository that includes all required files and configuration.
+
+GitHub Repository
+
+A GitHub repository was created that includes all required files and configuration for this project.
+
+The repository contains:
+
+nginx/ – Nginx Docker image (Ubuntu-based)
+
+test/ – Test Docker image (Python-based)
+
+docker-compose.yml
+
+.github/workflows/ci-workflow.yml
+
+README.md
+
+## CI (GitHub Actions)
+
+A GitHub Actions workflow (`.github/workflows/ci.yml`) runs on every push and pull request.
+
+It performs:
+- Builds and runs the project using Docker Compose.
+- If tests pass, it uploads an artifact containing a file named `succeeded`.
+- If tests fail, it uploads an artifact containing a file named `fail`.
+
+## Committing and Pushing the Workflow
+The workflow file was committed and pushed using:
+```bash
+git add .github/workflows/ci-workflow.yml
+git commit -m "Add GitHub Actions CI workflow"
+git push
+```
+
+## CI Execution Result
+After pushing the workflow file, GitHub Actions automatically triggered a CI run.
+
+Because all tests passed:
+
+The test container exited with code 0.
+
+The workflow detected success.
+
+An artifact named test-result was uploaded.
+
+The artifact contains a file named succeeded.
+
+This satisfies the requirement:
+
+If tests pass, publish an artifact containing a file named succeeded.
+If tests fail, publish an artifact containing a file named fail.
