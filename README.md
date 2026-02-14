@@ -294,13 +294,13 @@ This creates the following files:
 
 - nginx/certs/server.key — private key
 
-![self-signed certificate with HTTPS](<images/>)
+![self-signed certificate with HTTPS](<images/Advanced Functional Requirements/self-signed certificate with HTTPS/create Self-signed certificate.png>)
 
 I added an additional server block that listens on port 443 with SSL enabled and serves the same HTML content as the HTTP server on port 8080.
 
 I configured the paths to the self-signed certificate and private key used by Nginx for HTTPS.
 
-![add 443 port](<images/>)
+![add 443 port](<images/Advanced Functional Requirements/self-signed certificate with HTTPS/add 443 port.png>)
 
 I copied the self-signed certificate and private key into the Docker image so that Nginx can load them at runtime.
 
@@ -308,7 +308,7 @@ I exposed port 443 in the Nginx Docker image to support HTTPS traffic.
 
 I mapped host port 443 to container port 443 in docker-compose so HTTPS can be accessed from the local machine.
 
-![3](<images/>)
+![3](<images/Advanced Functional Requirements/self-signed certificate with HTTPS/3.png>)
 
 ### Verify HTTPS
 
@@ -316,10 +316,41 @@ I mapped host port 443 to container port 443 in docker-compose so HTTPS can be a
 docker compose up --build -d nginx
 curl.exe -k https://localhost/
 ```
-![4](<images/>)
+![4](<images/Advanced Functional Requirements/self-signed certificate with HTTPS/4.png>)
 
 The -k flag allows connection using a self-signed certificate.
 
 Expected result: HTTP 200 response with the same HTML page as port 8080.
+
+## Rate Limiting
+
+Rate limiting was configured per client IP at 5 requests per second and verified by sending 20 rapid requests and observing blocked responses (503).
+
+I configured a rate limiting zone per client IP with a limit of 5 requests per second.
+
+![1](<images/)
+
+Rate limiting is enforced on the main endpoints using limit_req inside the location block.
+The limit is configured per client IP using limit_req_zone with a rate of 5 requests per second.
+
+![2](<images/)
+
+The rate limit was tested by sending 20 rapid HTTP requests:
+
+```bash
+1..20 | % { curl.exe -s -o NUL -w "%{http_code}`n" http://localhost:8080/ }
+```
+![3](<images/)
+
+Observed behavior:
+
+Initial requests returned 200 OK
+
+Subsequent requests returned 503 Service Unavailable
+
+This confirms that the rate limit of 5 requests per second is enforced correctly.
+
+
+
 
 
